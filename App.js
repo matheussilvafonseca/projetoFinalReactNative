@@ -1,20 +1,33 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import 'react-native-gesture-handler';
+import * as React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createStackNavigator } from '@react-navigation/stack';
+import HomeScreen from './screens/HomeScreen';
+import ProductsScreen from './screens/ProductsScreen';
+import EditProductScreen from './screens/EditProductScreen';
+import NotificationsScreen from './screens/NotificationsScreen';
 
-export default function App() {
+const Drawer = createDrawerNavigator();
+const Stack = createStackNavigator();
+
+function ProductsStack() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <Stack.Navigator>
+      <Stack.Screen name="ProductsScreen" component={ProductsScreen} options={{ title: 'Produtos' }} />
+      <Stack.Screen name="EditProductScreen" component={EditProductScreen} options={{ title: 'Editar Produto' }} />
+    </Stack.Navigator>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Drawer.Navigator initialRouteName="Home">
+        <Drawer.Screen name="Home" component={HomeScreen} />
+        <Drawer.Screen name="Products" component={ProductsStack} options={{ title: 'Produtos' }} />
+        {/* <Drawer.Screen name="Notifications" component={NotificationsScreen} /> */}
+      </Drawer.Navigator>
+    </NavigationContainer>
+  );
+}
