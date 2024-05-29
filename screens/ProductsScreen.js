@@ -81,7 +81,7 @@ export default function ProductsScreen({ navigation }) {
 
   const renderProductItem = ({ item }) => (
     <View style={styles.productItem}>
-      <Text style={styles.productText}>{item.name} - {item.price}</Text>
+      <Text style={styles.productText}>{item.name} - R$ {item.price}</Text>
       <View style={styles.buttonsContainer}>
         <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('EditProductScreen', { id: item.id })}>
           <Text style={styles.buttonText}>Editar</Text>
