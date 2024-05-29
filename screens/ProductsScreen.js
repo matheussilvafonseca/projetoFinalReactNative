@@ -12,6 +12,12 @@ export default function ProductsScreen({ navigation }) {
   const [newProductPrice, setNewProductPrice] = useState('');
   const [newProductCategory, setNewProductCategory] = useState('');
   const [newProductDescription, setNewProductDescription] = useState('');
+  
+  // Estados para campos obrigatórios
+  const [isProductNameValid, setIsProductNameValid] = useState(true);
+  const [isProductPriceValid, setIsProductPriceValid] = useState(true);
+  const [isProductCategoryValid, setIsProductCategoryValid] = useState(true);
+  const [isProductDescriptionValid, setIsProductDescriptionValid] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(firestore, 'products'), (snapshot) => {
@@ -41,20 +47,35 @@ export default function ProductsScreen({ navigation }) {
   };
 
   const handleSaveProduct = async () => {
-    try {
-      await addDoc(collection(firestore, 'products'), {
-        name: newProductName,
-        price: newProductPrice,
-        description: newProductDescription,
-        category: newProductCategory
-      });
-      setModalVisible(false);
-      setNewProductName('');
-      setNewProductPrice('');
-      setNewProductCategory('');
-      setNewProductDescription('');
-    } catch (error) {
-      Alert.alert("Erro", "Não foi possível salvar o produto");
+    // Verifica se todos os campos estão preenchidos
+    const isNameValid = newProductName.trim() !== '';
+    const isPriceValid = newProductPrice.trim() !== '';
+    const isCategoryValid = newProductCategory.trim() !== '';
+    const isDescriptionValid = newProductDescription.trim() !== '';
+
+    setIsProductNameValid(isNameValid);
+    setIsProductPriceValid(isPriceValid);
+    setIsProductCategoryValid(isCategoryValid);
+    setIsProductDescriptionValid(isDescriptionValid);
+
+    if (isNameValid && isPriceValid && isCategoryValid && isDescriptionValid) {
+      try {
+        await addDoc(collection(firestore, 'products'), {
+          name: newProductName,
+          price: newProductPrice,
+          description: newProductDescription,
+          category: newProductCategory
+        });
+        setModalVisible(false);
+        setNewProductName('');
+        setNewProductPrice('');
+        setNewProductCategory('');
+        setNewProductDescription('');
+      } catch (error) {
+        Alert.alert("Erro", "Não foi possível salvar o produto");
+      }
+    } else {
+      Alert.alert("Erro", "Por favor, preencha todos os campos obrigatórios");
     }
   };
 
@@ -96,26 +117,26 @@ export default function ProductsScreen({ navigation }) {
               placeholder="Nome"
               value={newProductName}
               onChangeText={setNewProductName}
-              style={styles.input}
+              style={[styles.input, !isProductNameValid && styles.inputError]}
             />
             <TextInput
               placeholder="Preço"
               value={newProductPrice}
               onChangeText={setNewProductPrice}
               keyboardType="numeric"
-              style={styles.input}
+              style={[styles.input, !isProductPriceValid && styles.inputError]}
             />
             <TextInput
               placeholder="Categoria"
               value={newProductCategory}
               onChangeText={setNewProductCategory}
-              style={styles.input}
+              style={[styles.input, !isProductCategoryValid && styles.inputError]}
             />
             <TextInput
               placeholder="Descrição"
               value={newProductDescription}
               onChangeText={setNewProductDescription}
-              style={styles.input}
+              style={[styles.input, !isProductDescriptionValid && styles.inputError]}
             />
             <View style={styles.modalButtons}>
               <TouchableOpacity style={[styles.modalButton, styles.cancelButton]} onPress={() => setModalVisible(false)}>
@@ -161,6 +182,9 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#f8f8f8',
   },
+  inputError: {
+    borderColor: 'red',
+  },
   productItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -188,8 +212,6 @@ const styles = StyleSheet.create({
     marginRight: 8,
     justifyContent: 'center',
     alignItems: 'center',
-
-    
   },
   deleteButton2: {
     backgroundColor: '#F44336',
@@ -198,8 +220,6 @@ const styles = StyleSheet.create({
     marginRight: 8,
     justifyContent: 'center',
     alignItems: 'center',
-
-    
   },
   deleteButton: {
     backgroundColor: '#F44336',

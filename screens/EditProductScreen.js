@@ -11,6 +11,12 @@ export default function EditProductScreen({ route, navigation }) {
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
 
+
+  const [isProductNameValid, setIsProductNameValid] = useState(true);
+  const [isProductPriceValid, setIsProductPriceValid] = useState(true);
+  const [isProductCategoryValid, setIsProductCategoryValid] = useState(true);
+  const [isProductDescriptionValid, setIsProductDescriptionValid] = useState(true);
+
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -34,6 +40,17 @@ export default function EditProductScreen({ route, navigation }) {
   }, [id]);
 
   const handleSave = async () => {
+    const isNameValid = name.trim() !== '';
+    const isPriceValid = price.trim() !== '';
+    const isCategoryValid = category.trim() !== '';
+    const isDescriptionValid = description.trim() !== '';
+
+    setIsProductNameValid(isNameValid);
+    setIsProductPriceValid(isPriceValid);
+    setIsProductCategoryValid(isCategoryValid);
+    setIsProductDescriptionValid(isDescriptionValid);
+
+    if (isNameValid && isPriceValid && isCategoryValid && isDescriptionValid) {
     try {
       const docRef = doc(firestore, 'products', id);
       await updateDoc(docRef, { name, price, description, category });
@@ -41,7 +58,10 @@ export default function EditProductScreen({ route, navigation }) {
     } catch (error) {
       Alert.alert("Erro", "Não foi possível salvar as alterações");
     }
-  };
+  } else {
+    Alert.alert("Erro", "Por favor, preencha todos os campos obrigatórios");
+  } 
+};
 
   if (!product) {
     return <Text>Loading...</Text>;
@@ -49,10 +69,10 @@ export default function EditProductScreen({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <TextInput value={name} onChangeText={setName} placeholder="Nome" style={styles.input} />
-      <TextInput value={price} onChangeText={setPrice} placeholder="Preço" keyboardType="numeric" style={styles.input} />
-      <TextInput value={description} onChangeText={setDescription} placeholder="Descrição" style={styles.input} />
-      <TextInput value={category} onChangeText={setCategory} placeholder="Categoria" style={styles.input} />
+      <TextInput value={name} onChangeText={setName} placeholder="Nome" style={[styles.input, !isProductNameValid && styles.inputError]} />
+      <TextInput value={price} onChangeText={setPrice} placeholder="Preço" keyboardType="numeric" style={[styles.input, !isProductPriceValid && styles.inputError]} />
+      <TextInput value={description} onChangeText={setDescription} placeholder="Descrição" style={[styles.input, !isProductDescriptionValid && styles.inputError]} />
+      <TextInput value={category} onChangeText={setCategory} placeholder="Categoria" style={[styles.input, !isProductCategoryValid && styles.inputError]} />
       <Button title="Salvar" onPress={handleSave} />
     </View>
   );
@@ -63,6 +83,9 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     backgroundColor: '#f8f8f8',
+  },
+  inputError: {
+    borderColor: 'red',
   },
   input: {
     borderWidth: 1,
