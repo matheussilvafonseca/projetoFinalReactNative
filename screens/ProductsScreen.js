@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Alert, Modal, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import { firestore } from '../firebaseConfig';
 import { collection, onSnapshot, doc, deleteDoc, addDoc } from 'firebase/firestore';
+import {schedulePushNotification, NotificationScreem, registerForPushNotificationsAsync} from './NotificationsScreen'
+import firebase from '@react-native-firebase/app';
 
 export default function ProductsScreen({ navigation }) {
   const [products, setProducts] = useState([]);
@@ -66,6 +68,7 @@ export default function ProductsScreen({ navigation }) {
           description: newProductDescription,
           category: newProductCategory
         });
+        schedulePushNotification(newProductName, newProductCategory, newProductPrice)
         setModalVisible(false);
         setNewProductName('');
         setNewProductPrice('');

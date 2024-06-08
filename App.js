@@ -1,8 +1,12 @@
 import 'react-native-gesture-handler';
 import * as React from 'react';
+import { useEffect, useState } from 'react';
+import { Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
+import { messaging } from './firebaseConfig';  // Importando a configuração do Firebase
+
 import HomeScreen from './screens/HomeScreen';
 import ProductsScreen from './screens/ProductsScreen';
 import EditProductScreen from './screens/EditProductScreen';
@@ -21,6 +25,7 @@ function ProductsStack() {
 }
 
 export default function App() {
+
   return (
     <NavigationContainer>
       <Drawer.Navigator initialRouteName="Home">
